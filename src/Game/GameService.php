@@ -107,7 +107,7 @@ class GameService
             ->orderBy('position')
             ->orderBy('id')
             ->get()
-            ->filter(fn (GamePlayer $p) => $p->user !== null);
+            ->filter(fn (GamePlayer $p) => $p->user !== null || $p->guest_name !== null);
 
         $mine = $players->first(fn (GamePlayer $p) => (int) $p->user_id === (int) $actor->id);
 
@@ -143,9 +143,22 @@ class GameService
                 // Host's private notes (e.g. real names) are never sent to anyone else.
                 'note' => $isHost ? $p->note : null,
                 'offerExpiresAt' => $p->offer_expires_at?->toIso8601String(),
-                'user' => $this->serializeUser($p->user),
+                'user' => $p->user ? $this->serializeUser($p->user) : $this->serializeGuest($p),
             ])->values()->all(),
         ]);
+    }
+
+    /** A non-member on the list: just the name the host typed. */
+    protected function serializeGuest(GamePlayer $p): array
+    {
+        return [
+            'id' => null,
+            'guest' => true,
+            'username' => null,
+            'displayName' => (string) $p->guest_name,
+            'avatarUrl' => null,
+            'slug' => null,
+        ];
     }
 
     public function serializeUser(User $user): array
@@ -200,6 +213,7 @@ class GameService
 
             // ---- host management
             'invite' => $this->invite($actor, $discussion, $game, $isHost, (int) ($input['userId'] ?? 0), ! empty($input['toWaitlist'])),
+            'addGuest' => $this->addGuest($discussion, $game, $isHost, (string) ($input['guestName'] ?? ''), ! empty($input['toWaitlist'])),
             default => $this->hostAction($actor, $discussion, $game, $isHost, $action, $input),
         };
 
@@ -358,6 +372,48 @@ class GameService
         if ($kind !== 'approved_waitlist') {
             $this->notify($discussion, [$user], $kind, $actor);
         }
+    }
+
+    /**
+     * Add a non-member by name. They go on the list exactly like a member the
+     * host adds (open spot, or the wait list), but are never notified.
+     */
+    protected function addGuest(Discussion $discussion, Game $game, bool $isHost, string $name, bool $toWaitlist = false): void
+    {
+        $this->requireHost($isHost);
+
+        $name = mb_substr(trim(preg_replace('/\s+/u', ' ', $name)), 0, 60);
+        if ($name === '') {
+            $this->fail('guest_name_required');
+        }
+
+        $row = GamePlayer::where('discussion_id', $discussion->id)
+            ->whereNull('user_id')
+            ->where('guest_name', $name)
+            ->first();
+
+        if ($row && ! in_array($row->status, ['declined', 'expired'], true)) {
+            $this->fail('member_already_listed', ['{name}' => $name]);
+        }
+
+        $hasSeat = $this->freeSeats($discussion, $game) > 0;
+
+        if (! $game->hasWaitlist() && ($toWaitlist || ! $hasSeat)) {
+            $this->fail($toWaitlist ? 'waitlist_off' : 'no_open_spots');
+        }
+
+        $row ??= new GamePlayer(['discussion_id' => $discussion->id, 'user_id' => null, 'guest_name' => $name]);
+
+        if (! $toWaitlist && $hasSeat) {
+            $row->status = 'invited';
+            $row->position = $this->nextPosition($discussion, self::SEATED);
+        } else {
+            $row->status = 'waitlist';
+            $row->position = $this->nextPosition($discussion, ['waitlist']);
+        }
+
+        $row->offer_expires_at = null;
+        $row->save();
     }
 
     protected function hostAction(User $actor, Discussion $discussion, Game $game, bool $isHost, string $action, array $input): void
@@ -550,7 +606,7 @@ class GameService
         if ($statuses) {
             $rows = GamePlayer::with('user')
                 ->where('discussion_id', $source->id)
-                ->where('user_id', '!=', $actor->id)
+                ->where(fn ($q) => $q->whereNull('user_id')->orWhere('user_id', '!=', $actor->id))
                 ->whereIn('status', $statuses)
                 ->orderBy('position')
                 ->orderBy('id')
@@ -564,7 +620,7 @@ class GameService
             $line = 0;
 
             foreach ($rows as $row) {
-                if (! $row->user) {
+                if (! $row->user && $row->guest_name === null) {
                     continue;
                 }
 
@@ -579,12 +635,13 @@ class GameService
                 GamePlayer::create([
                     'discussion_id' => $new->id,
                     'user_id' => $row->user_id,
+                    'guest_name' => $row->guest_name,
                     'status' => $seated ? 'invited' : 'waitlist',
                     'position' => $seated ? ++$seat : ++$line,
                     'note' => $row->note,
                 ]);
 
-                if ($seated) {
+                if ($seated && $row->user) {
                     $invited[] = $row->user;
                 }
             }

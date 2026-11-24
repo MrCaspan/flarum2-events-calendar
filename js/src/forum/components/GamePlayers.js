@@ -225,17 +225,26 @@ export default class GamePlayers extends Component {
             <i className="fas fa-times" aria-hidden="true" />
           </button>
         </div>
-        {this.results.length > 0 && (
+        {this.query.trim() !== '' && (
           <ul className="Dropdown-menu GamePlayers-results">
-            {this.results.map((u) => (
-              <li key={u.id} className="GamePlayers-result">
-                <button type="button" className="hasIcon GamePlayers-resultMain" onclick={() => this.invite(u, this.adding.toWaitlist)}>
-                  {this.avatar(u)}
-                  <span className="GamePlayers-name">{u.displayName}</span>
-                  {u.displayName !== u.username && <span className="GamePlayers-username">@{u.username}</span>}
+            {[
+              ...this.results.map((u) => (
+                <li key={u.id} className="GamePlayers-result">
+                  <button type="button" className="hasIcon GamePlayers-resultMain" onclick={() => this.invite(u, this.adding.toWaitlist)}>
+                    {this.avatar(u)}
+                    <span className="GamePlayers-name">{u.displayName}</span>
+                    {u.displayName !== u.username && <span className="GamePlayers-username">@{u.username}</span>}
+                  </button>
+                </li>
+              )),
+              // A non-member: just the typed name on the list.
+              <li key="guest" className="GamePlayers-result GamePlayers-result--guest">
+                <button type="button" className="hasIcon GamePlayers-resultMain" onclick={() => this.addGuest(this.query, this.adding.toWaitlist)}>
+                  <i className="icon fas fa-user-plus" aria-hidden="true" />
+                  <span className="GamePlayers-name">{t('add_guest', { name: this.query.trim() })}</span>
                 </button>
-              </li>
-            ))}
+              </li>,
+            ]}
           </ul>
         )}
       </div>
@@ -337,7 +346,7 @@ export default class GamePlayers extends Component {
   /** [pill] 1. (avatar) Name (note) — the pill column comes first so it lines up. */
   row(p, game, number) {
     const u = p.user;
-    const isMe = app.session.user && app.session.user.id() === String(u.id);
+    const isMe = !u.guest && app.session.user && app.session.user.id() === String(u.id);
     const isHostRow = u.id === game.hostId;
 
     return (
@@ -345,12 +354,21 @@ export default class GamePlayers extends Component {
         {this.status(p, game) || <span className="GamePlayers-pillSlot" />}
         <span className="GamePlayers-num">{number ? number + '.' : ''}</span>
         <span className="GamePlayers-who">
-          <a className="GamePlayers-user" href={app.route('user', { username: u.slug })} route={app.route('user', { username: u.slug })}>
-            {this.avatar(u)}
-            <span className="GamePlayers-name">{u.displayName}</span>
-          </a>
-          {(isHostRow || p.note) && (
-            <span className="GamePlayers-note">({[isHostRow ? extractText(t('host')) : null, p.note].filter(Boolean).join(', ')})</span>
+          {u.guest ? (
+            <span className="GamePlayers-user">
+              {this.avatar(u)}
+              <span className="GamePlayers-name">{u.displayName}</span>
+            </span>
+          ) : (
+            <a className="GamePlayers-user" href={app.route('user', { username: u.slug })} route={app.route('user', { username: u.slug })}>
+              {this.avatar(u)}
+              <span className="GamePlayers-name">{u.displayName}</span>
+            </a>
+          )}
+          {(isHostRow || u.guest || p.note) && (
+            <span className="GamePlayers-note">
+              ({[isHostRow ? extractText(t('host')) : null, u.guest ? extractText(t('guest')) : null, p.note].filter(Boolean).join(', ')})
+            </span>
           )}
         </span>
       </li>
@@ -467,5 +485,10 @@ export default class GamePlayers extends Component {
   invite(user, toWaitlist) {
     this.stopAdding();
     this.act({ action: 'invite', userId: user.id, toWaitlist: !!toWaitlist });
+  }
+
+  addGuest(name, toWaitlist) {
+    this.stopAdding();
+    this.act({ action: 'addGuest', guestName: name.trim(), toWaitlist: !!toWaitlist });
   }
 }

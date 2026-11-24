@@ -20,12 +20,13 @@ use Flarum\User\User;
  *
  * @property int $id
  * @property int $discussion_id
- * @property int $user_id
+ * @property int|null $user_id      null for a non-member (see guest_name)
+ * @property string|null $guest_name  a non-member added by the host: just a name
  * @property string $status
  * @property int $position
  * @property string|null $note
  * @property Carbon|null $offer_expires_at
- * @property User $user
+ * @property User|null $user
  */
 class GamePlayer extends AbstractModel
 {
@@ -40,7 +41,7 @@ class GamePlayer extends AbstractModel
         'offer_expires_at' => 'datetime',
     ];
 
-    protected $fillable = ['discussion_id', 'user_id', 'status', 'position', 'note', 'offer_expires_at'];
+    protected $fillable = ['discussion_id', 'user_id', 'guest_name', 'status', 'position', 'note', 'offer_expires_at'];
 
     public function user()
     {

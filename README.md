@@ -12,6 +12,7 @@ Turn discussions into events. Discussions in your events tag get a date, show up
 - **Attendee list** on any event that has a date (the host adds it; it isn't an event until it has a date, and an event with a list can have its date changed but not removed):
   - number of spots and an optional minimum to go ahead ("Need 2 more confirmed"), then a go-ahead message you can set in the admin ("It's on! See you there.")
   - host invites members; they reply **I'm in** / **Can't make it**
+  - host can also add **guests** (non-members): just a name on the list, shown as "(Guest)", managed by the host, never notified
   - members can ask to join, and the host approves
   - **wait list** in order, and the host moves people in when a spot opens. Wait lists can be switched off for the whole forum (admin) or for one event (host).
   - notes after names (host only), and a host menu to approve, move, or remove people
