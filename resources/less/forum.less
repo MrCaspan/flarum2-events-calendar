@@ -1,0 +1,1007 @@
+@media (max-width: 767px) {
+  .fc-toolbar-chunk {
+    margin: 10px 5px 0 0;
+    display: flex;
+  }
+}
+@media (max-width: 400px) {
+  .fc-toolbar-chunk {
+    transform: scale(0.7);
+  }
+}
+@media (max-width: 399px) {
+  .fc-toolbar-chunk {
+    display: grid;
+  }
+  .fc-prev-button.fc-button.fc-button-primary,
+  .fc-next-button.fc-button.fc-button-primary {
+    margin-top: 10px;
+  }
+}
+
+.fc-daygrid-day-top > a,
+.fc-scrollgrid-sync-inner > a {
+  cursor: default;
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+// ---- Calendar page colours (built in; previously patched in custom CSS) ----
+// Flarum colours every link with the primary (red) colour, which turned the
+// whole calendar red. Use the normal text colour so it follows light/dark mode.
+.CalendarPage .fc {
+  a,
+  a:hover,
+  a:focus,
+  table td a,
+  table th a {
+    color: var(--text-color);
+  }
+
+  // Event titles in month view.
+  .fc-daygrid-event,
+  .fc-daygrid-event .fc-event-title,
+  .fc-daygrid-event .fc-event-time {
+    color: var(--text-color);
+  }
+
+  // Days outside the current month stay dimmed.
+  .fc-day-other .fc-daygrid-day-top a {
+    color: var(--muted-color);
+  }
+
+  // List view: sticky day headers use the page background instead of
+  // FullCalendar's light-grey (unreadable in dark mode).
+  .fc-list-sticky .fc-list-day > *,
+  .fc-list-day-cushion {
+    background: var(--body-bg);
+  }
+
+  .fc-list-event:hover td {
+    background: var(--control-bg);
+  }
+}
+
+// The banner spans the top of the first post, above the avatar and author line.
+.CommentPost > .EventBanner {
+  margin: 0 0 20px;
+  text-align: left;
+}
+
+.EventBanner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 6px;
+  background: var(--control-bg);
+  border-left: 4px solid var(--primary-color);
+  color: var(--text-color);
+
+  &--unset {
+    background: var(--body-bg);
+    border: 1px dashed var(--muted-color);
+  }
+
+  &-icon {
+    font-size: 22px;
+    color: var(--primary-color);
+  }
+
+  &--unset &-icon {
+    color: var(--muted-color);
+  }
+
+  &-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted-color);
+  }
+
+  &-date {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  &--unset &-date {
+    font-weight: 400;
+    color: var(--muted-color);
+    font-style: italic;
+  }
+}
+
+// Composer: put the "When?" field on its own line under the discussion title.
+.ComposerBody-header > .item-eventAt {
+  display: block;
+  flex-basis: 100%;
+  width: 100%;
+}
+
+.EventDateField {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 4px 0;
+
+  label {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .FormControl {
+    width: auto;
+  }
+}
+
+// In the composer header, match the borderless discussion title instead of
+// looking like a boxed form field.
+.ComposerBody-header .DateTimePicker .FormControl.DateTimePicker-input[readonly]:not([disabled]) {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-left: 0;
+  min-width: 210px;
+
+  &:hover,
+  &:focus,
+  &.active {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+// Boxed variant (Edit event date dialog): full width, calendar icon, outline.
+.DateTimePicker--boxed {
+  display: block;
+  width: 100%;
+
+  .DateTimePicker-icon {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+    pointer-events: none;
+  }
+
+  .FormControl.DateTimePicker-input[readonly]:not([disabled]) {
+    width: 100%;
+    min-width: 0;
+    padding-left: 40px;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(127, 127, 127, 0.35);
+    transition: box-shadow 0.15s;
+
+    &:hover {
+      box-shadow: inset 0 0 0 1px var(--primary-color);
+    }
+
+    &:focus,
+    &.active {
+      box-shadow: inset 0 0 0 2px var(--primary-color);
+    }
+  }
+}
+
+// Buttons bottom-right like a standard dialog: [Delete] [Save].
+.EditEventDateModal .Modal-body .EditEventDateModal-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+
+  .Button {
+    width: auto;
+    margin: 0;
+  }
+
+  .Button--primary {
+    min-width: 100px;
+  }
+
+  .EditEventDateModal-delete {
+    color: #e5484d;
+
+    &:hover,
+    &:focus {
+      background: #e5484d;
+      color: #fff;
+    }
+  }
+}
+
+// ---- Players list (first post of a game) ----
+// Part of the post itself: no box, background or side border.
+.GamePlayers {
+  margin-top: 24px;
+  color: var(--text-color);
+  transition: opacity 0.15s;
+
+  &--busy {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &--loading {
+    background: none;
+    border: 0;
+    padding: 8px 0;
+  }
+
+  &--setup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 6px;
+    border: 1px dashed var(--muted-color);
+
+    span {
+      flex: 1;
+      min-width: 200px;
+      color: var(--muted-color);
+    }
+  }
+
+  &-setupIcon {
+    font-size: 20px;
+    color: var(--muted-color);
+  }
+
+  &-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+    margin-bottom: 10px;
+  }
+
+  &-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+
+    .fas {
+      color: var(--primary-color);
+      margin-right: 4px;
+    }
+  }
+
+  &-count {
+    font-weight: 600;
+    color: var(--muted-color);
+  }
+
+  &-min {
+    font-size: 13px;
+    color: var(--muted-color);
+
+    &--on {
+      color: #30a46c;
+      font-weight: 600;
+    }
+  }
+
+  &-settings {
+    margin-left: auto;
+  }
+
+  // Same look as the "Players List" title.
+  &-subtitle {
+    margin: 28px 0 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-color);
+
+    .fas {
+      color: var(--primary-color);
+      margin-right: 4px;
+    }
+  }
+
+  // [IN] 1. (avatar) Name (note): pill column first, then our own numbers.
+  // A 3-column grid (pill | number | name) so the columns line up while each
+  // pill column is only as wide as its widest pill.
+  &-list {
+    display: grid;
+    grid-template-columns: max-content max-content minmax(0, 1fr);
+    column-gap: 8px;
+    row-gap: 6px;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > .GamePlayers-row {
+      display: contents;
+    }
+
+    // Pills keep their own width instead of stretching to the column.
+    .GamePlayers-pill,
+    .GamePlayers-menu {
+      justify-self: start;
+    }
+
+    &--out .GamePlayers-name {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+  }
+
+  &-row {
+    padding: 3px 0;
+
+    > * {
+      vertical-align: middle;
+    }
+
+    &--me .GamePlayers-name {
+      font-weight: 700;
+    }
+    &--open {
+      color: var(--muted-color);
+      font-style: italic;
+    }
+  }
+
+  &-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 2px 8px 2px 2px;
+    border-radius: 14px;
+    background: var(--control-bg);
+    color: var(--text-color) !important;
+    text-decoration: none !important;
+    transition: opacity 0.15s;
+
+    // Fade on hover like the pills; no outline.
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+
+  &-avatar.Avatar {
+    --size: 24px;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    line-height: 24px;
+    color: #fff;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  &-name {
+    font-weight: 600;
+  }
+
+  &-username {
+    color: var(--muted-color);
+    margin-left: 6px;
+  }
+
+  &-note {
+    margin-left: 6px;
+    color: var(--muted-color);
+  }
+
+  &-status {
+    margin-left: 8px;
+    font-size: 13px;
+
+    // Small solid green "IN" pill.
+    &--confirmed {
+      display: inline-block;
+      padding: 1px 9px;
+      border-radius: 10px;
+      background: #30a46c;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      line-height: 1.6;
+    }
+
+    &--pending {
+      color: var(--muted-color);
+      font-style: italic;
+    }
+
+    &--offered {
+      color: #f5a524;
+      font-weight: 600;
+    }
+
+    &--out {
+      color: var(--muted-color);
+    }
+  }
+
+  // Status pill: IN / … / OUT etc. For the host it is the menu button.
+  &-pillSlot {
+    display: block;
+  }
+
+  // Public view of an undecided player: plain text, not a pill.
+  &-tbd {
+    justify-self: start;
+    min-width: 30px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--muted-color);
+    cursor: default;
+  }
+
+  &-num {
+    text-align: right;
+    font-weight: 600;
+  }
+
+  // Name chip + "(note)" centred on one line.
+  &-who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 6px;
+    min-width: 0;
+
+    .GamePlayers-note {
+      margin-left: 0;
+    }
+  }
+
+  &-menu {
+    display: inline-block;
+
+    .GamePlayers-remove {
+      color: #e5484d;
+    }
+  }
+
+  &-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 30px;
+    height: 18px;
+    // Fixed height + line-height 1 centres the capitals; the font's tall
+    // ascender space made them sit low with a taller line-height.
+    padding: 0 7px 1px;
+    border: 0;
+    border-radius: 10px;
+    background: rgba(127, 127, 127, 0.28);
+    color: var(--text-color);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    .Button-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      line-height: 1;
+    }
+
+    &--confirmed {
+      background: #30a46c;
+      color: #fff;
+    }
+
+    &--invited,
+    &--waitlist {
+      min-width: 30px;
+      justify-content: center;
+      letter-spacing: 0.1em;
+    }
+
+    &--offered {
+      background: #f5a524;
+      color: #1b1b1b;
+      letter-spacing: 0;
+    }
+
+    &--declined,
+    &--expired {
+      background: transparent;
+      box-shadow: inset 0 0 0 1px var(--muted-color);
+      color: var(--muted-color);
+    }
+  }
+
+  // Inside the dropdown the pill is a button: no extra margin, show it's clickable.
+  &-menu .GamePlayers-pill {
+    margin-right: 0;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.15s;
+
+    // Just fade on hover; no outline.
+    &:hover,
+    &:focus {
+      opacity: 0.7;
+    }
+  }
+
+  &-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--control-bg);
+  }
+
+  &-prompt {
+    flex-basis: 100%;
+    font-weight: 600;
+  }
+
+  &-hint {
+    margin: 14px 0 0;
+    color: var(--muted-color);
+    font-size: 13px;
+  }
+
+  // Host: "+ Open seat" / "+ Add to wait list" rows are clickable.
+  // Sits right after the number, like the player names (not centred in the cell).
+  &-addBtn {
+    justify-self: start;
+    padding: 2px 0;
+    border: 0;
+    background: none;
+    color: var(--muted-color);
+    font: inherit;
+    font-style: italic;
+    text-align: left;
+    cursor: pointer;
+    transition: opacity 0.15s;
+
+    &:hover,
+    &:focus {
+      opacity: 0.7;
+    }
+  }
+
+  // The search that replaces the row when clicked.
+  &-inlineSearch {
+    position: relative;
+    max-width: 340px;
+  }
+
+  &-inlineField {
+    position: relative;
+
+    .fa-search {
+      position: absolute;
+      top: 50%;
+      left: 11px;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: var(--muted-color);
+      pointer-events: none;
+    }
+
+    .FormControl {
+      height: 32px;
+      padding: 4px 30px 4px 32px;
+    }
+  }
+
+  &-inlineClose {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    padding: 2px 6px;
+    border: 0;
+    background: none;
+    color: var(--muted-color);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--text-color);
+    }
+  }
+
+  .GamePlayers-results {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    z-index: 5;
+
+    // [ (avatar) Name           ] [+ Wait List]
+    .GamePlayers-result {
+      display: flex;
+      align-items: center;
+    }
+
+    .GamePlayers-resultMain {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+    }
+
+  }
+}
+
+@media (max-width: 767px) {
+  .GamePlayers {
+    &-list {
+      column-gap: 6px;
+    }
+  }
+}
+
+// Host-only button in the discussion sidebar: full width like Reply / Following.
+.DiscussionPage-nav .item-scheduleNextGame {
+  margin-bottom: 10px;
+
+  // Icon and text on one line, centred like the Reply button.
+  .ScheduleNextButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    white-space: nowrap;
+
+    .Button-icon {
+      margin-right: 7px;
+    }
+  }
+}
+
+// Breathing room between the fields in the plugin's dialogs.
+.ScheduleNextGameModal,
+.GameSettingsModal {
+  // Core 2.0 makes .Form-group a flex column with a 10px gap; tighten it so a
+  // label sits a few pixels above its field.
+  .Modal-body .Form-group {
+    gap: 3px;
+    margin-bottom: 22px;
+  }
+
+  // Checkbox and its text on one centred line; help text tucked right under it.
+  // Core's .checkbox adds left padding and positions the box absolutely;
+  // undo that so checkboxes line up flush left with the other fields.
+  .Modal-body label.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding-left: 0;
+
+    input[type='checkbox'] {
+      position: static;
+      margin: 0;
+      flex-shrink: 0;
+    }
+  }
+
+  .Modal-body label.checkbox + .helpText {
+    margin: 0 0 0 24px;
+  }
+
+  // Labels are titles for the field right under them: keep them close.
+  .Modal-body .Form-group > label:not(.checkbox) {
+    display: block;
+    margin-bottom: 2px;
+    line-height: 1.3;
+  }
+}
+
+// One-line explanation at the top of the dialog.
+.ScheduleNextGameModal .Modal-body .ScheduleNextGameModal-intro {
+  margin: 0 0 18px;
+  text-align: left;
+}
+
+// Two copy options, each with its help line, left-aligned and spaced as a pair.
+.ScheduleNextGameModal .Modal-body .ScheduleNextGameModal-copy {
+  align-items: flex-start;
+  align-self: stretch;
+  text-align: left;
+
+  label.checkbox {
+    justify-content: flex-start;
+  }
+
+  .helpText + label.checkbox {
+    margin-top: 14px;
+  }
+}
+
+// Same for the settings dialog's checkbox.
+.GameSettingsModal .Modal-body .Form-group {
+  text-align: left;
+
+  label.checkbox {
+    justify-content: flex-start;
+  }
+}
+
+// Quick picks under the date: [+1 week / Dec 3] [+2 weeks / Dec 10] ...
+.ScheduleNextGameModal .Modal-body .ScheduleNextGameModal-quick {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  // Full width (core's Form-group doesn't stretch its children), so the four
+  // buttons spread evenly under the date field.
+  align-self: stretch;
+  width: 100%;
+  margin-top: 8px;
+
+  .ScheduleNextGameModal-quickBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+    margin: 0;
+    padding: 6px 4px;
+    line-height: 1.2;
+    transition: opacity 0.15s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &.active {
+      background: var(--primary-color);
+      color: #fff;
+
+      .ScheduleNextGameModal-quickDate {
+        color: #fff;
+        opacity: 0.85;
+      }
+    }
+  }
+
+  .ScheduleNextGameModal-quickWeeks {
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .ScheduleNextGameModal-quickDate {
+    font-size: 11px;
+    color: var(--muted-color);
+  }
+}
+
+.ScheduleNextGameModal .Modal-body .ScheduleNextGameModal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+
+  .Button {
+    width: auto;
+    margin: 0;
+  }
+}
+
+// Settings dialog buttons bottom-right, like the Edit date dialog.
+.GameSettingsModal .Modal-body .GameSettingsModal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+
+  .Button {
+    width: auto;
+    margin: 0;
+  }
+
+  .Button--primary {
+    min-width: 100px;
+  }
+
+  .GameSettingsModal-delete {
+    color: #e5484d;
+
+    &:hover,
+    &:focus {
+      background: #e5484d;
+      color: #fff;
+    }
+  }
+}
+
+// ---- Date/time picker (flatpickr), themed with the forum's colours ----
+.DateTimePicker {
+  position: relative;
+  display: inline-block;
+
+  // Small clear "x" inside the right end of the field.
+  .DateTimePicker-clear {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    padding: 2px 4px;
+    border: 0;
+    background: none;
+    font-size: 11px;
+    line-height: 1;
+    color: var(--muted-color);
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      color: var(--text-color);
+    }
+  }
+
+  // Core fades read-only inputs (opacity 0.5); this one is read-only only so the
+  // date can't be mistyped, so show it at full strength.
+  .FormControl.DateTimePicker-input[readonly]:not([disabled]) {
+    opacity: 1;
+    color: var(--text-color);
+    background: var(--control-bg);
+    min-width: 230px;
+    padding-right: 28px; // room for the clear "x"
+    cursor: pointer;
+  }
+}
+
+// flatpickr's own CSS loads after the forum's, so every override is scoped under
+// `html body` to outrank it. The colours come from the forum's light/dark variables.
+html body {
+.flatpickr-calendar {
+  // Above the composer and modals.
+  z-index: 10000;
+  background: var(--body-bg);
+  color: var(--text-color);
+  border: 1px solid var(--control-bg);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+
+  &::before,
+  &::after {
+    display: none;
+  }
+
+  &.hasTime .flatpickr-time {
+    border-top: 1px solid var(--control-bg);
+  }
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year,
+.flatpickr-weekdays,
+span.flatpickr-weekday {
+  background: transparent;
+  color: var(--text-color);
+  fill: var(--text-color);
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months option {
+  background: var(--body-bg);
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: var(--text-color);
+  fill: var(--text-color);
+
+  &:hover svg {
+    fill: var(--primary-color);
+  }
+}
+
+.flatpickr-day {
+  color: var(--text-color);
+
+  &:hover,
+  &:focus {
+    background: var(--control-bg);
+    border-color: var(--control-bg);
+  }
+
+  &.today {
+    border-color: var(--primary-color);
+  }
+
+  &.selected,
+  &.selected:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+  }
+
+  &.prevMonthDay,
+  &.nextMonthDay,
+  &.flatpickr-disabled {
+    color: var(--muted-color);
+  }
+}
+
+.flatpickr-time {
+  input,
+  .flatpickr-am-pm,
+  .flatpickr-time-separator {
+    color: var(--text-color);
+    background: transparent;
+  }
+
+  input:hover,
+  input:focus,
+  .flatpickr-am-pm:hover,
+  .flatpickr-am-pm:focus {
+    background: var(--control-bg);
+  }
+
+  .numInputWrapper span.arrowUp::after {
+    border-bottom-color: var(--text-color);
+  }
+
+  .numInputWrapper span.arrowDown::after {
+    border-top-color: var(--text-color);
+  }
+}
+
+.flatpickr-confirm {
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 700;
+  padding: 10px 0;
+  cursor: pointer;
+  border-radius: 0 0 5px 5px;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &.darkTheme,
+  i,
+  svg {
+    color: #fff;
+    fill: #fff;
+  }
+
+  i {
+    margin-left: 4px;
+  }
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months:hover,
+.flatpickr-current-month input.cur-year:hover,
+.numInputWrapper:hover {
+  background: var(--control-bg);
+}
+}
+
+// "required" marker after "When?" when the admin requires a date on every event.
+.EventDateField-required {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--muted-color);
+}
