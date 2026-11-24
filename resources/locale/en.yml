@@ -64,7 +64,6 @@ mrcaspan-flarum2-events-calendar:
       login_to_request: "Log in to ask to join."
       invite_placeholder: "Add by username…"
       setup_prompt: "Add a list of {attendees} so people can confirm and join the wait list."
-      needs_date: "Add a date first: once this {event} has a date and time, you can add a list of {attendees}."
       setup_button: "Add {attendees} list"
       setup_title: "Add {attendees} list"
       settings_title: "{Attendees} list settings"

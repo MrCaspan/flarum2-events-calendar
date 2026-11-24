@@ -33,6 +33,8 @@ export default function addGamePlayers() {
   extend(DiscussionPage.prototype, 'sidebarItems', function (items) {
     const discussion = this.discussion;
     if (!discussion || !isInEventsTag((discussion.tags && discussion.tags()) || []) || !canEditEvent(discussion)) return;
+    // No date yet: a normal post, so no event tools.
+    if (!(discussion.eventAt && discussion.eventAt())) return;
 
     items.add('scheduleNextGame', <ScheduleNextButton discussion={discussion} />, -90);
   });
