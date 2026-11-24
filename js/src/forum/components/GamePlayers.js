@@ -91,6 +91,17 @@ export default class GamePlayers extends Component {
     if (!game.enabled) {
       if (!game.canSetup) return null;
 
+      // It isn't an event until it has a date: no list before that.
+      const discussion = this.attrs.discussion;
+      if (!(discussion.eventAt && discussion.eventAt())) {
+        return (
+          <div className="GamePlayers GamePlayers--setup GamePlayers--needsDate">
+            <i className="fas fa-calendar-alt GamePlayers-setupIcon" aria-hidden="true" />
+            <span>{t('needs_date')}</span>
+          </div>
+        );
+      }
+
       return (
         <div className="GamePlayers GamePlayers--setup">
           <i className="fas fa-users GamePlayers-setupIcon" aria-hidden="true" />

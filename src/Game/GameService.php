@@ -217,6 +217,11 @@ class GameService
                 $this->fail('not_events_tag');
             }
 
+            // It isn't an event until it has a date: no attendee list before that.
+            if (! $this->eventAt($discussion)) {
+                $this->fail('list_needs_date');
+            }
+
             $game = new Game(['discussion_id' => $discussion->id, 'seats' => 10, 'allow_requests' => true]);
         }
 

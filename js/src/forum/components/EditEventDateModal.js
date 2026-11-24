@@ -6,6 +6,7 @@ import Stream from 'flarum/common/utils/Stream';
 import extractText from 'flarum/common/utils/extractText';
 import { toLocalInput, localInputToIso } from '../utils/eventsTag';
 import DateTimePicker from './DateTimePicker';
+import { bumpGameVersion } from '../utils/gameVersion';
 
 export default class EditEventDateModal extends FormModal {
   oninit(vnode) {
@@ -60,6 +61,8 @@ export default class EditEventDateModal extends FormModal {
     this.loading = true;
     try {
       await this.attrs.discussion.save({ eventAt: iso });
+      // The attendee list (inside the first post) depends on the date.
+      bumpGameVersion();
       this.hide();
     } finally {
       this.loading = false;
@@ -73,6 +76,7 @@ export default class EditEventDateModal extends FormModal {
     this.clearing = true;
     try {
       await this.attrs.discussion.save({ eventAt: null });
+      bumpGameVersion();
       this.hide();
     } finally {
       this.clearing = false;

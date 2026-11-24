@@ -13,6 +13,7 @@ use Flarum\Tags\Tag;
 use Flarum\User\User;
 use Illuminate\Support\Arr;
 use MrCaspan\EventsCalendar\DiscussionEvent;
+use MrCaspan\EventsCalendar\Game\Game;
 use MrCaspan\EventsCalendar\Words;
 
 /**
@@ -49,6 +50,14 @@ class DiscussionResourceFields
                     if ($value === null && $inEventsTag && $this->dateRequired()) {
                         throw new ValidationException([
                             'eventAt' => resolve(TranslatorInterface::class)->trans('mrcaspan-flarum2-events-calendar.api.date_required', Words::params(resolve(SettingsRepositoryInterface::class))),
+                        ]);
+                    }
+
+                    // An event with an attendee list keeps its date (it can be changed,
+                    // not removed), so nobody's RSVP ends up on an undated discussion.
+                    if ($value === null && $discussion->exists && Game::where('discussion_id', $discussion->id)->exists()) {
+                        throw new ValidationException([
+                            'eventAt' => resolve(TranslatorInterface::class)->trans('mrcaspan-flarum2-events-calendar.api.date_has_list', Words::params(resolve(SettingsRepositoryInterface::class))),
                         ]);
                     }
 

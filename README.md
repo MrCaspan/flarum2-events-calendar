@@ -9,7 +9,7 @@ Turn discussions into events. Discussions in your events tag get a date, show up
 - **Calendar page** at `/events` (month and list views), linked from the sidebar.
 - **Event date** ("When?") in the composer for discussions in the events tag, shown at the top of the first post. The author, or anyone who can rename the discussion, can change it.
 - **"Post Event"** button on the calendar page that preselects the events tag.
-- **Attendee list** on any event (the host adds it):
+- **Attendee list** on any event that has a date (the host adds it; it isn't an event until it has a date, and an event with a list can have its date changed but not removed):
   - number of spots and an optional minimum to go ahead ("Need 2 more confirmed"), then a go-ahead message you can set in the admin ("It's on! See you there.")
   - host invites members; they reply **I'm in** / **Can't make it**
   - members can ask to join, and the host approves
