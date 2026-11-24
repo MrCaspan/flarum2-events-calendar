@@ -1,6 +1,7 @@
 import app from 'flarum/admin/app';
 import Extend from 'flarum/common/extenders';
 import Switch from 'flarum/common/components/Switch';
+import extractText from 'flarum/common/utils/extractText';
 
 const PREFIX = 'mrcaspan-flarum2-events-calendar.admin.settings.';
 const SETTING = 'mrcaspan-events-calendar.';
@@ -77,6 +78,32 @@ export const extend = [
             {t('require_date')}
           </Switch>
           <p className="helpText">{t('require_date_help')}</p>
+        </div>
+      );
+    })
+    .customSetting(function () {
+      const message = this.setting(SETTING + 'go_message');
+
+      return (
+        <div className="Form-group EventsCalendar-setting">
+          <label>{t('go_heading')}</label>
+          <p className="helpText">{t('go_help')}</p>
+          <input className="FormControl EventsCalendar-goMessage" type="text" placeholder={extractText(t('go_placeholder'))} bidi={message} />
+        </div>
+      );
+    })
+    .customSetting(function () {
+      const setting = this.setting(SETTING + 'waitlist_enabled');
+      const raw = setting();
+      // On unless it has been switched off.
+      const on = !['0', 0, false, 'false'].includes(raw);
+
+      return (
+        <div className="Form-group EventsCalendar-setting">
+          <Switch state={on} onchange={(value) => setting(value ? '1' : '0')}>
+            {t('waitlist_enabled')}
+          </Switch>
+          <p className="helpText">{t('waitlist_enabled_help')}</p>
         </div>
       );
     })

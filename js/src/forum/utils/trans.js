@@ -29,6 +29,12 @@ export function words() {
   return params;
 }
 
+/** Put the forum's words into admin-written text: "{Event} on!" -> "Game on!". */
+export function fillWords(text) {
+  const w = words();
+  return String(text).replace(/\{(\w+)\}/g, (match, name) => (name in w ? w[name] : match));
+}
+
 /** Translate one of this extension's texts, with the forum's words filled in. */
 export default function trans(key, params = {}) {
   return app.translator.trans(PREFIX + key, { ...words(), ...params });

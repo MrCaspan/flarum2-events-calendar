@@ -1,5 +1,5 @@
 import app from 'flarum/forum/app';
-import trans from '../utils/trans';
+import trans, { fillWords } from '../utils/trans';
 import Component from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import Dropdown from 'flarum/common/components/Dropdown';
@@ -131,14 +131,15 @@ export default class GamePlayers extends Component {
           ]}
         </ul>
 
-        {/* The host always gets a wait list with an "Add to wait list" spot at the bottom. */}
-        {(waitlist.length > 0 || game.isHost) && [
+        {/* With a wait list on, the host always gets it with an "Add to wait list" spot at the bottom.
+            With it off, people already on it (from before it was switched off) still show, so the host can move them. */}
+        {(waitlist.length > 0 || (game.isHost && game.waitlist)) && [
           <h4 key="wh" className="GamePlayers-subtitle"><i className="fas fa-user-clock" aria-hidden="true" /> {t('waitlist')}</h4>,
           <ul key="wl" className="GamePlayers-list GamePlayers-list--waitlist">
             {/* One keyed array: a keyed <li> next to an unkeyed fragment makes Mithril throw. */}
             {[
               ...waitlist.map((p, i) => this.row(p, game, i + 1)),
-              ...(game.isHost ? [this.addRow(game, 'wait', waitlist.length + 1, true, t('add_to_waitlist'))] : []),
+              ...(game.isHost && game.waitlist ? [this.addRow(game, 'wait', waitlist.length + 1, true, t('add_to_waitlist'))] : []),
             ]}
           </ul>,
         ]}
@@ -239,12 +240,14 @@ export default class GamePlayers extends Component {
   minPlayersNote(game, confirmed) {
     if (!game.minPlayers) return null;
     const need = game.minPlayers - confirmed;
+    // The admin's own go-ahead message, if set (Admin > Events Calendar).
+    const custom = String(app.forum.attribute('eventsCalendar.goMessage') || '').trim();
 
     return need > 0 ? (
       <span className="GamePlayers-min">{t('need_more', { count: need })}</span>
     ) : (
       <span className="GamePlayers-min GamePlayers-min--on">
-        <i className="fas fa-check" aria-hidden="true" /> {t('game_on')}
+        <i className="fas fa-check" aria-hidden="true" /> {custom ? fillWords(custom) : t('game_on')}
       </span>
     );
   }
@@ -361,7 +364,7 @@ export default class GamePlayers extends Component {
     if (!['confirmed', 'requested', 'waitlist'].includes(p.status)) items.push(<Button icon="fas fa-check-circle" onclick={run('confirm')}>{t('host_menu.confirm')}</Button>);
     // Wait list -> game: seated as "…" and asked to confirm, same as adding them by hand.
     if (canTakeSeat) items.push(<Button icon="fas fa-chair" onclick={run('seat')}>{t('host_menu.seat')}</Button>);
-    if (p.status !== 'waitlist') items.push(<Button icon="fas fa-list-ol" onclick={run('waitlist')}>{t('host_menu.waitlist')}</Button>);
+    if (p.status !== 'waitlist' && game.waitlist) items.push(<Button icon="fas fa-list-ol" onclick={run('waitlist')}>{t('host_menu.waitlist')}</Button>);
     if (seated || p.status === 'waitlist') {
       items.push(<Button icon="fas fa-arrow-up" onclick={run('up')}>{t('host_menu.up')}</Button>);
       items.push(<Button icon="fas fa-arrow-down" onclick={run('down')}>{t('host_menu.down')}</Button>);
@@ -423,7 +426,13 @@ export default class GamePlayers extends Component {
     } else if (status === 'requested') {
       content = [<span className="GamePlayers-prompt">{t('you_requested')}</span>, btn('cancel', 'cancel_request', 'fas fa-times')];
     } else if (game.allowRequests && !game.isHost && !game.started) {
-      content = btn('request', openSeats > 0 ? 'request_seat' : 'request_waitlist', 'fas fa-hand-paper', true);
+      if (openSeats > 0) {
+        content = btn('request', 'request_seat', 'fas fa-hand-paper', true);
+      } else if (game.waitlist) {
+        content = btn('request', 'request_waitlist', 'fas fa-hand-paper', true);
+      } else {
+        content = <span className="GamePlayers-prompt">{t('full_no_waitlist')}</span>;
+      }
     }
 
     return content ? <div className="GamePlayers-actions">{content}</div> : null;

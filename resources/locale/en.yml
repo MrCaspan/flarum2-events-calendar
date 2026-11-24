@@ -72,6 +72,10 @@ mrcaspan-flarum2-events-calendar:
       min_players_placeholder: "Optional"
       allow_requests: "Let members ask to join"
       allow_requests_help: "You approve every request. When the {event} is full, approved {attendees} go on the wait list."
+      allow_requests_help_no_waitlist: "You approve every request. Once every {spot} is taken, nobody else can ask to join."
+      use_waitlist: "Use a wait list"
+      use_waitlist_help: "When the {event} is full, people can join a wait list, and you move them in when a {spot} opens. Untick to have no wait list for this {event}."
+      full_no_waitlist: "This {event} is full."
       add_to_waitlist: "Add to wait list"
       cancel: "Cancel"
       create: "Create list"
@@ -150,6 +154,8 @@ mrcaspan-flarum2-events-calendar:
       subject: "[{Event}] {actor} didn't take the {spot} in {title}"
       body: "{actor} didn't reply to the {spot} offer for **{title}** in time. The {spot} is open again.\n\n{url}"
   api:
+    waitlist_off: "This {event} has no wait list."
+    full_no_waitlist: "This {event} is full and has no wait list."
     date_required: "Every {event} needs a date and time. Fill in \"When?\" to continue."
     no_list: "This {event} has no {attendees} list."
     not_events_tag: "{Attendees} lists are only available on discussions in the events tag."
@@ -168,6 +174,11 @@ mrcaspan-flarum2-events-calendar:
     settings:
       events_tag: Events tag
       events_tag_help: Pick the tag you use for events. Discussions started in this tag get a "When?" date and time box in the composer. Once a discussion has a date, it shows on the calendar page (/events) and its starter can add an attendee list. The date is optional unless you turn on the setting below; a discussion in this tag without a date is just a normal discussion. Discussions in other tags aren't affected. The "Post Event" button on the calendar page starts a discussion in this tag.
+      go_heading: When an event has enough attendees
+      go_help: "Hosts can set a minimum number of attendees for an event to go ahead. Once enough have confirmed, the attendee list shows this message. You can use '{Event}', '{event}', '{Attendees}' and the other wording placeholders. Leave it empty for the default."
+      go_placeholder: "It's on! See you there."
+      waitlist_enabled: Allow wait lists
+      waitlist_enabled_help: When this is on, each event's attendee list can have a wait list for when it's full, and hosts can still turn it off for their own event. When it's off, no event has a wait list. Once every spot is taken nobody else can join, and the wait list options are hidden. People already on a wait list stay listed until the host moves or removes them.
       require_date: Every event must have a date and time
       require_date_help: When this is on, a new discussion in the events tag can't be posted until "When?" is filled in, and an event's date can be changed but not removed. Discussions that already exist without a date aren't changed.
       who_help: "Who can post events: anyone who can start a discussion in the events tag can post an event. To limit it to certain groups, go to <a>Permissions</a>, restrict the events tag, and choose who can \"Start discussions\" in it. Viewing and replying work the same way, through the tag's own permissions."

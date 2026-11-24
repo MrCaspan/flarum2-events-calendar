@@ -17,7 +17,14 @@ export default class GameSettingsModal extends FormModal {
     this.isNew = !game.enabled;
     this.seats = Stream(String(game.seats || 10));
     this.minPlayers = Stream(game.minPlayers ? String(game.minPlayers) : '');
-    this.allowRequests = Stream(game.enabled ? !!game.allowRequests : true);  }
+    this.allowRequests = Stream(game.enabled ? !!game.allowRequests : true);
+    this.waitlist = Stream(game.enabled ? game.waitlistOwn !== false : true);
+  }
+
+  /** The admin can switch wait lists off for the whole forum. */
+  waitlistAllowed() {
+    return app.forum.attribute('eventsCalendar.waitlistEnabled') !== false;
+  }
 
   className() {
     return 'GameSettingsModal Modal--small';
@@ -43,8 +50,17 @@ export default class GameSettingsModal extends FormModal {
             <input type="checkbox" checked={this.allowRequests()} onchange={(e) => this.allowRequests(e.target.checked)} />
             {t('allow_requests')}
           </label>
-          <p className="helpText">{t('allow_requests_help')}</p>
+          <p className="helpText">{t(this.waitlistAllowed() && this.waitlist() ? 'allow_requests_help' : 'allow_requests_help_no_waitlist')}</p>
         </div>
+        {this.waitlistAllowed() && (
+          <div className="Form-group">
+            <label className="checkbox">
+              <input type="checkbox" checked={this.waitlist()} onchange={(e) => this.waitlist(e.target.checked)} />
+              {t('use_waitlist')}
+            </label>
+            <p className="helpText">{t('use_waitlist_help')}</p>
+          </div>
+        )}
         <div className="GameSettingsModal-actions">
           {!this.isNew && (
             <Button type="button" className="Button GameSettingsModal-delete" icon="fas fa-trash-alt" onclick={this.remove.bind(this)} disabled={this.loading}>
@@ -69,6 +85,7 @@ export default class GameSettingsModal extends FormModal {
         seats: parseInt(this.seats(), 10) || 10,
         minPlayers: parseInt(this.minPlayers(), 10) || null,
         allowRequests: this.allowRequests(),
+        ...(this.waitlistAllowed() ? { waitlist: this.waitlist() } : {}),
       });
       this.attrs.onsave(game);
       this.hide();

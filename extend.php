@@ -49,6 +49,10 @@ return [
         ->serializeToForum('eventsCalendar.eventsTag', 'mrcaspan-events-calendar.events_tag', 'strval')
         ->default('mrcaspan-events-calendar.require_date', false)
         ->serializeToForum('eventsCalendar.requireDate', 'mrcaspan-events-calendar.require_date', 'boolval')
+        ->default('mrcaspan-events-calendar.go_message', '')
+        ->serializeToForum('eventsCalendar.goMessage', 'mrcaspan-events-calendar.go_message', 'strval')
+        ->default('mrcaspan-events-calendar.waitlist_enabled', true)
+        ->serializeToForum('eventsCalendar.waitlistEnabled', 'mrcaspan-events-calendar.waitlist_enabled', 'boolval')
         // The forum's own words ("Event", "Attendee", "Spot", ...), as one object.
         ->serializeToForum(
             'eventsCalendar.words',

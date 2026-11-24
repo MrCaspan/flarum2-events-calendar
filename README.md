@@ -10,10 +10,10 @@ Turn discussions into events. Discussions in your events tag get a date, show up
 - **Event date** ("When?") in the composer for discussions in the events tag, shown at the top of the first post. The author, or anyone who can rename the discussion, can change it.
 - **"Post Event"** button on the calendar page that preselects the events tag.
 - **Attendee list** on any event (the host adds it):
-  - number of spots and an optional minimum to go ahead ("Need 2 more confirmed")
+  - number of spots and an optional minimum to go ahead ("Need 2 more confirmed"), then a go-ahead message you can set in the admin ("It's on! See you there.")
   - host invites members; they reply **I'm in** / **Can't make it**
   - members can ask to join, and the host approves
-  - **wait list** in order, and the host moves people in when a spot opens
+  - **wait list** in order, and the host moves people in when a spot opens. Wait lists can be switched off for the whole forum (admin) or for one event (host).
   - notes after names (host only), and a host menu to approve, move, or remove people
 - **Schedule Next**: the host creates the next event in one click (+1 to +4 weeks), copying the title, tags, first post, attendee list and wait list.
 - **Notifications and emails** for invites, replies, requests and drop-outs (members choose alert and/or email).

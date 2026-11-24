@@ -105,11 +105,13 @@ export default class ScheduleNextGameModal extends FormModal {
             </label>
             <p className="helpText">{t('copy_players_help')}</p>
 
-            <label className="checkbox">
-              <input type="checkbox" checked={this.copyWaitlist()} onchange={(e) => this.copyWaitlist(e.target.checked)} />
-              {t('copy_waitlist')}
-            </label>
-            <p className="helpText">{t('copy_waitlist_help')}</p>
+            {this.game.waitlist !== false && [
+              <label className="checkbox">
+                <input type="checkbox" checked={this.copyWaitlist()} onchange={(e) => this.copyWaitlist(e.target.checked)} />
+                {t('copy_waitlist')}
+              </label>,
+              <p className="helpText">{t('copy_waitlist_help')}</p>,
+            ]}
           </div>
         )}
         <div className="ScheduleNextGameModal-actions">

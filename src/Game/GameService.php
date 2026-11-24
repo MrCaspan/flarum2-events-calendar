@@ -125,6 +125,10 @@ class GameService
             'minPlayers' => $game->min_players,
             'allowRequests' => $game->allow_requests,
             'autoOffer' => $game->auto_offer ?? true,
+            // waitlist: this event has one; waitlistAllowed: the forum allows them at all.
+            'waitlist' => $game->hasWaitlist(),
+            'waitlistOwn' => (bool) ($game->waitlist ?? true),
+            'waitlistAllowed' => (bool) $this->settings->get('mrcaspan-events-calendar.waitlist_enabled', true),
             'started' => $eventAt !== null && $eventAt->isPast(),
             'hostId' => (int) $discussion->user_id,
             'me' => $mine ? [
@@ -233,6 +237,10 @@ class GameService
             $game->auto_offer = (bool) $input['autoOffer'];
         }
 
+        if (array_key_exists('waitlist', $input)) {
+            $game->waitlist = (bool) $input['waitlist'];
+        }
+
         $game->save();
 
         // The host takes the first seat.
@@ -257,6 +265,11 @@ class GameService
 
         if ($row && ! in_array($row->status, ['declined', 'expired'], true)) {
             $this->fail('already_listed');
+        }
+
+        // Full, and no wait list to join.
+        if (! $game->hasWaitlist() && $this->freeSeats($discussion, $game) <= 0) {
+            $this->fail('full_no_waitlist');
         }
 
         $row ??= new GamePlayer(['discussion_id' => $discussion->id, 'user_id' => $actor->id]);
@@ -312,10 +325,17 @@ class GameService
             $this->fail('member_already_listed', ['{name}' => $user->display_name]);
         }
 
+        $hasSeat = $this->freeSeats($discussion, $game) > 0;
+
+        // No wait list on this event: people can only be added to an open spot.
+        if (! $game->hasWaitlist() && ($toWaitlist || ! $hasSeat)) {
+            $this->fail($toWaitlist ? 'waitlist_off' : 'no_open_spots');
+        }
+
         $row ??= new GamePlayer(['discussion_id' => $discussion->id, 'user_id' => $user->id]);
         $wasRequest = $row->exists && $row->status === 'requested';
 
-        if (! $toWaitlist && $this->freeSeats($discussion, $game) > 0) {
+        if (! $toWaitlist && $hasSeat) {
             // Someone who asked to come is confirmed straight away.
             $row->status = $wasRequest ? 'confirmed' : 'invited';
             $row->position = $this->nextPosition($discussion, self::SEATED);
@@ -374,6 +394,9 @@ class GameService
                 break;
 
             case 'waitlist':
+                if (! $game->hasWaitlist()) {
+                    $this->fail('waitlist_off');
+                }
                 $row->status = 'waitlist';
                 $row->position = $this->nextPosition($discussion, ['waitlist']);
                 $row->offer_expires_at = null;
@@ -503,7 +526,11 @@ class GameService
             'min_players' => $sourceGame->min_players,
             'allow_requests' => $sourceGame->allow_requests,
             'auto_offer' => $sourceGame->auto_offer ?? true,
+            'waitlist' => $sourceGame->waitlist ?? true,
         ]);
+
+        // No wait list on the new event: there's nowhere to copy one to.
+        $copyWaitlist = $copyWaitlist && $game->hasWaitlist();
 
         // The person scheduling it hosts it and takes the first seat.
         GamePlayer::create([
@@ -538,6 +565,11 @@ class GameService
 
                 // Everyone seated has to confirm again for the new date.
                 $seated = in_array($row->status, self::SEATED, true) && $seat < $game->seats;
+
+                // Overflow can't go to a wait list the new event doesn't have.
+                if (! $seated && ! $game->hasWaitlist()) {
+                    continue;
+                }
 
                 GamePlayer::create([
                     'discussion_id' => $new->id,
