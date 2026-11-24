@@ -249,7 +249,8 @@
     border-radius: 6px;
     border: 1px dashed var(--muted-color);
 
-    span {
+    // Only the prompt text, not the label inside the button.
+    > span {
       flex: 1;
       min-width: 200px;
       color: var(--muted-color);
